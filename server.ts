@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import usuariosRoutes from "./src/routes/usuarios/usuarios.ts";
 import swagger from "./src/plugins/swagger.ts";
 
 const fastify = Fastify({
@@ -8,6 +9,7 @@ const fastify = Fastify({
 const h :string = "hola"
 
 fastify.register(swagger)
+fastify.register(usuariosRoutes);
 
 try {
     await fastify.listen({host:"::", port: 3000})

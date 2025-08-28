@@ -28,7 +28,7 @@ export default fp<FastifySwaggerOptions>(async (fastify) => {
         }
       ],
       tags: [
-        { name: 'usuarios', description: 'Root end points.' }
+        { name: 'usuarios', description: 'Usuarios end points.' }
       ],
       components: {
         securitySchemes: {
