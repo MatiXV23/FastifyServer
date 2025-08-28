@@ -46,8 +46,8 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
             type: "object",
             properties: {
                 nombre: {type: "string", minLength: 2},
-                isAdmin: {type: "boolean"},
-                id_usuario : {type: "number", minimum: 4},
+                // isAdmin: {type: "boolean"},
+                // id_usuario : {type: "number", minimum: 4},
             },
         },
         response: {
@@ -64,6 +64,35 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
       return usuarios;
     }
   );
+  fastify.get(
+    "/usuarios/:id_usuario",
+    {
+      schema: {
+        summary: "Obtener usuario por id",
+        description: "Obtener un usuario especifico según su ID",
+        tags: ["usuarios"],
+        params: {
+        type: "object",
+        properties: {
+          id_usuario: { type: "number", minimum: 1 },
+        },
+        required: ["id_usuario"],
+      },
+        response: {
+            200: usuarioSchema,
+        }
+      } as FastifySchema,
+    },
+    async function handler(req, rep) {
+        const { id_usuario } = req.params as { id_usuario: number };
+        const usuario = usuarios.find((u) => u.id_usuario === id_usuario);
+        if (usuario) {
+          return usuario;
+        } else {
+          return rep.code(404).send({ error: "Usuario no encontrado" });
+        }
+    }
+  );
   fastify.post(
     "/usuarios",
     {
@@ -72,16 +101,8 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
         description: "Esta ruta permite crear un nuevo usuario.",
         tags: ["usuarios"],
         body: usuarioPostSchema,
-        // querystring: {
-        //     type: "object",
-        //     properties: {
-        //         id_usuario : {type: "number", min:0},
-        //         nombre: {type: "string", minLength: 2},
-        //         isAdmin: {type: "boolean"},
-        //     }
-        // },
         response: {
-            200: usuarioSchema,
+            201: usuarioSchema,
         }
       } as FastifySchema,
     },
