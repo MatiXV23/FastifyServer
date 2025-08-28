@@ -12,7 +12,7 @@ const usuarios: Usuarios[] = [
     {  nombre: "Brahian", isAdmin: false , id_usuario: 3 },
 ];
 
-let ultimoId = usuarios[usuarios.length-1].id_usuario;
+let ultimoId = usuarios[usuarios.length - 1].id_usuario;
 
 const usuarioSchema = {
     type: "object",
@@ -47,7 +47,7 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
             properties: {
                 nombre: {type: "string", minLength: 2},
                 isAdmin: {type: "boolean"},
-                id_usuario : {type: "number", minimum:0},
+                id_usuario : {type: "number", minimum: 4},
             },
         },
         response: {
@@ -87,7 +87,8 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
     },
     async function handler(req, rep) {
         const { nombre, isAdmin } = req.body as Usuarios; 
-        const usuario = {nombre, isAdmin, id_usuario: ultimoId++}
+        ultimoId++
+        const usuario = {nombre, isAdmin, id_usuario: ultimoId}
         usuarios.push(usuario);
         rep.code(201);
       return usuario;
