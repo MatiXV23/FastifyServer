@@ -7,8 +7,6 @@ const fastify = Fastify({
     logger: true
 })
 
-const h :string = "hola"
-
 fastify.register(swagger)
 fastify.register(usuariosRoutes);
 fastify.register(usuarioRoutes)
