@@ -44,9 +44,7 @@ async function usuarioRoutes(fastify: FastifyInstance, options: object) {
         required: ["id_usuario"],
         },
         body: usuarioPostSchema,
-        response: {
-            204: usuarioSchema,
-        }
+        response: 204
       } as FastifySchema,
     },
     async function handler(req, rep) {
@@ -57,7 +55,7 @@ async function usuarioRoutes(fastify: FastifyInstance, options: object) {
         if(usuarioIndex===-1) return rep.code(404).send({ error: "Usuario no encontrado" });
         
         usuarios[usuarioIndex]={nombre, isAdmin, id_usuario};
-        return usuarios[usuarioIndex];
+        return rep.code(204);
     }
   );
   fastify.delete(
@@ -74,9 +72,7 @@ async function usuarioRoutes(fastify: FastifyInstance, options: object) {
         },
         required: ["id_usuario"],
         },
-        response: {
-            204: usuarioSchema,
-        }
+        response:204
       } as FastifySchema,
     },
     async function handler(req, rep) {
@@ -87,7 +83,7 @@ async function usuarioRoutes(fastify: FastifyInstance, options: object) {
         if (usuarioIndex===-1) return rep.code(404).send({ error: "Usuario no encontrado" })
         
         usuarios.splice(usuarioIndex,1);
-        return rep.send("Usuario eliminado con éxito.").code(204)
+        return rep.code(204)
         
     }
   );
