@@ -21,9 +21,7 @@ ___
 ___
 ## 🚀 Ejecución del proyecto 🚀
 ### 📡 Servidor 📡
-#### Dentro del proyecto es posible ejecutar el servidor de varias maneras:
- - node server.ts
-   - Ejecutamos el archivo server.ts desde la terminal con node
+#### Dentro del proyecto es posible ejecutar el servidor:
  - npm run dev
    - Esto ejecuta el script =>  "dev": "npm install && node --watch server.ts" <= definido dentro del package-json
 #### Luego de ejecutar el servidor ya podremos hacerle las peticiones
