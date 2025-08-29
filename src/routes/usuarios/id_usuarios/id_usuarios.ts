@@ -24,9 +24,10 @@ async function usuarioRoutes(fastify: FastifyInstance, options: object) {
     async function handler(req, rep) {
         const { id_usuario } = req.params as { id_usuario: number };
         const usuario = usuarios.find((u) => u.id_usuario === id_usuario);
-
-        return (usuario) ? usuario : rep.send({ error: "Usuario no encontrado" }).code(404);
+        
+        return (usuario) ? usuario : rep.code(404).send({ error: "Usuario no encontrado" });
     }
+    
   );
   fastify.put(
     "/usuarios/:id_usuario",
@@ -53,7 +54,7 @@ async function usuarioRoutes(fastify: FastifyInstance, options: object) {
         const { nombre, isAdmin } = req.body as {nombre: "String", isAdmin: boolean}; 
         const usuarioIndex = usuarios.findIndex((u)=>u.id_usuario===id_usuario);
 
-        if(usuarioIndex===-1) return rep.send({ error: "Usuario no encontrado" }).code(404);
+        if(usuarioIndex===-1) return rep.code(404).send({ error: "Usuario no encontrado" });
         
         usuarios[usuarioIndex]={nombre, isAdmin, id_usuario};
         return usuarios[usuarioIndex];
@@ -83,7 +84,7 @@ async function usuarioRoutes(fastify: FastifyInstance, options: object) {
         
         const usuarioIndex = usuarios.findIndex((u)=>u.id_usuario===id_usuario);
         
-        if (usuarioIndex===-1) return rep.send({ error: "Usuario no encontrado" }).code(404)
+        if (usuarioIndex===-1) return rep.code(404).send({ error: "Usuario no encontrado" })
         
         usuarios.splice(usuarioIndex,1);
         return rep.send("Usuario eliminado con éxito.").code(204)

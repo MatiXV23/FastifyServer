@@ -33,7 +33,7 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
       
       if (query.nombre)  users = users.filter((u) => u.nombre == query.nombre);
       if (query.id_usuario) users = users.filter((u) => u.id_usuario == query.id_usuario);
-      if (query.isAdmin) users = users.filter((u) => u.isAdmin == query.isAdmin);
+      if (query.isAdmin || query.isAdmin === false) users = users.filter((u) => u.isAdmin == query.isAdmin);
 
       return (users.length !== usuarios.length) ? users : usuarios;
     }
