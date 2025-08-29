@@ -19,3 +19,26 @@ ___
   - **PUT**: Modificar datos de un usuario especifico según su id *"/usuarios/:id_usuarios"*
   - **DELETE**: Eliminar un usuario especifico según su id *"/usuarios/:id_usuarios"*
 ___
+## 🚀 Ejecución del proyecto 🚀
+### 📡 Servidor 📡
+#### Dentro del proyecto es posible ejecutar el servidor de varias maneras:
+ - node server.ts
+   - Ejecutamos el archivo server.ts desde la terminal con node
+ - npm run dev
+   - Esto ejecuta el script =>  "dev": "npm install && node --watch server.ts" <= definido dentro del package-json
+#### Luego de ejecutar el servidor ya podremos hacerle las peticiones
+### 📲 Cliente 📲
+#### Para ver los metodos creados en el cliente se encuentra en la ruta "./src/routes/usuarios/usuarios.ts". Es necesario seguir los siguientes pasos
+- Luego de iniciar el servidor
+  - Ingresar en la url localhost:3000/docs/
+  - Veremos los metodos (CRUD) listados en la parte inferior de la pantalla.
+  - Debemos desplegar la pestaña "usuarios" haciendo click en la misma.
+  - Seleccionamos el metodo que deseemos probar.
+  - Para ejecutar el metodo es necesario clickear en "Try it out".
+  - Si el metodo no requiere parametros obligatorios (como el GET /usuarios) hacemos click en "Execute"
+  - Listo, con eso ya estaria probado el metodo (CRUD) que fue creado en el archivo "usuarios.ts" del cliente.
+___
+## 🔅 Demostración de uso 🔅
+### A continuación video demostración del proyecto.
+#### Click en la imagen para ver el video.
+[![Mira el video](https://palnode.com/wp-content/uploads/2024/03/How-to-Embed-YouTube-Videos-in-a-Website.png)](https://www.youtube.com/watch?v=Rw5Ah7ORJ68)
