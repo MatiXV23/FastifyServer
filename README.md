@@ -41,4 +41,4 @@ ___
 ## 🔅 Demostración de uso 🔅
 ### A continuación video demostración del proyecto.
 #### Click en la imagen para ver el video.
-[![Mira el video](https://palnode.com/wp-content/uploads/2024/03/How-to-Embed-YouTube-Videos-in-a-Website.png)](https://www.youtube.com/watch?v=Rw5Ah7ORJ68)
+[![Mira el video](https://palnode.com/wp-content/uploads/2024/03/How-to-Embed-YouTube-Videos-in-a-Website.png)](https://youtu.be/J8FPKk0-RVo)
