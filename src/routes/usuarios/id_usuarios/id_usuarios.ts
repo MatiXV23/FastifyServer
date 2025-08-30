@@ -1,7 +1,9 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
-import { usuarios, usuarioPostSchema, usuarioSchema } from "../../../types/usuarios.ts";
+import { usuarioSchema } from "../../../models/usuarios_model.ts";
+import { usuarios } from "../../../models/db_models.ts";
+import { Type } from "@fastify/type-provider-typebox";
 
-async function usuarioRoutes(fastify: FastifyInstance, options: object) {
+const usuarioRoutes = async function(fastify: FastifyInstance, options: object) {
   fastify.get(
     "/usuarios/:id_usuario",
     {

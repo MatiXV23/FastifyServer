@@ -1,9 +1,11 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
-import { usuarios, usuarioPostSchema, usuarioSchema, getUltimoId, aumentarUltimoId } from "../../types/usuarios.ts";
-import type { Usuario } from "../../types/usuarios.ts";
+import { usuarioSchema } from "../../models/usuarios_model.ts";
+import type { Usuario } from "../../models/usuarios_model.ts";
+import { usuarios, getUltimoId, aumentarUltimoId } from "../../models/db_models.ts";
+import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { Type } from "@fastify/type-provider-typebox";
 
-
-async function usuariosRoutes(fastify: FastifyInstance, options: object) {
+const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify: FastifyInstance, options: object) {
   fastify.get(
     "/usuarios",
     {
