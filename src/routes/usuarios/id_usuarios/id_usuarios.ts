@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
 import { usuarioSchema } from "../../../models/usuarios_model.ts";
-import { usuarios } from "../../../models/db_models.ts";
+import { getUsuarios } from "../../../db/usuarios_db.ts";
 import { Type } from "@fastify/type-provider-typebox";
 
 const usuarioRoutes = async function(fastify: FastifyInstance, options: object) {
