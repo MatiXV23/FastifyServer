@@ -1,11 +1,12 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
-import { usuarioSchema } from "../../models/usuarios_model.ts";
+import { queryUsuarioSchema, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { Usuario } from "../../models/usuarios_model.ts";
 import { getUsuarios, getUltimoId, aumentarUltimoId } from "../../db/usuarios_db.ts";
-import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@fastify/type-provider-typebox";
 
-const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify: FastifyInstance, options: object) {
+const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
+  const usuarios = getUsuarios(); // Todo tuyo Agus
   fastify.get(
     "/usuarios",
     {
@@ -13,24 +14,14 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify: Fastif
         summary: "Obtener usuarios",
         description: "Obtener el array de todos los usuarios.",
         tags: ["usuarios"],
-        querystring: {
-            type: "object",
-            properties: {
-                nombre: {type: "string", minLength: 2},
-                isAdmin: {type: "boolean"},
-                id_usuario : {type: "number", minimum: 1},
-            },
-        },
+        querystring: queryUsuarioSchema,
         response: {
-            200: {
-                type: "array",
-                items: usuarioSchema,
-            }
+            200: Type.Array(usuarioSchema)
         }
-      } as FastifySchema,
+      },
     },
     async function handler(req, rep) {
-      const query = req.query as {nombre?:string, isAdmin?: boolean, id_usuario?: number};
+      const query = req.query;
       let users = getUsuarios()
       
       if (query.nombre)  users = users.filter((u) => u.nombre == query.nombre);
@@ -47,14 +38,14 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify: Fastif
         summary: "Crear usuarios",
         description: "Esta ruta permite crear un nuevo usuario.",
         tags: ["usuarios"],
-        body: usuarioPostSchema,
+        body: Type.Omit(usuarioSchema,["id_usuario"]),
         response: {
             201: usuarioSchema,
         }
-      } as FastifySchema,
+      },
     },
     async function handler(req, rep) {
-      const { nombre, isAdmin } = req.body as Usuario; 
+      const { nombre, isAdmin } = req.body; 
       aumentarUltimoId()
 
       const usuario = {nombre, isAdmin, id_usuario: getUltimoId()}

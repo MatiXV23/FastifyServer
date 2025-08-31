@@ -1,9 +1,12 @@
-import type { FastifyInstance, FastifySchema } from "fastify";
 import { usuarioSchema } from "../../../models/usuarios_model.ts";
-import { getUsuarios } from "../../../db/usuarios_db.ts";
-import { Type } from "@fastify/type-provider-typebox";
+import { deleteUsuario, getUsuarios } from "../../../db/usuarios_db.ts";
+import {Null, Type } from "@fastify/type-provider-typebox";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"; 
+import { ErrorSchema } from "../../../models/shared_model.ts";
 
-const usuarioRoutes = async function(fastify: FastifyInstance, options: object) {
+
+const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: object) {
+  const usuarios = getUsuarios();// Todo tuyo Agus.
   fastify.get(
     "/usuarios/:id_usuario",
     {
@@ -11,23 +14,22 @@ const usuarioRoutes = async function(fastify: FastifyInstance, options: object) 
         summary: "Obtener usuario por id",
         description: "Obtener un usuario especifico según su ID",
         tags: ["usuarios"],
-        params: {
-        type: "object",
-        properties: {
-          id_usuario: { type: "number", minimum: 1 },
-        },
-        required: ["id_usuario"],
-      },
+        params: Type.Pick(usuarioSchema, ["id_usuario"]),
         response: {
             200: usuarioSchema,
+            404: ErrorSchema,
         }
-      } as FastifySchema,
+      },
     },
     async function handler(req, rep) {
-        const { id_usuario } = req.params as { id_usuario: number };
+        const { id_usuario } = req.params;
         const usuario = usuarios.find((u) => u.id_usuario === id_usuario);
         
-        return (usuario) ? usuario : rep.code(404).send({ error: "Usuario no encontrado" });
+        return (usuario) ? usuario : rep.code(404).send({
+          error: "Usuario no encontrado",
+          statusCode: 404,
+          message: "Usuario no encontrado"
+        });
     }
     
   );
@@ -38,23 +40,24 @@ const usuarioRoutes = async function(fastify: FastifyInstance, options: object) 
         summary: "Modificar usuarios",
         description: "Esta ruta permite modificar un nuevo usuario.",
         tags: ["usuarios"],
-        params: {
-        type: "object",
-        properties: {
-          id_usuario: { type: "number", minimum: 1 },
-        },
-        required: ["id_usuario"],
-        },
-        body: usuarioPostSchema,
-        response: 204
-      } as FastifySchema,
+        params: Type.Pick(usuarioSchema, ["id_usuario"]),
+        body: Type.Omit(usuarioSchema, ["id_usuario"]),
+        response: {
+          204: Type.Null(),
+          404: ErrorSchema,
+        }
+      },
     },
     async function handler(req, rep) {
-        const { id_usuario} = req.params as {id_usuario: number}; 
+        const { id_usuario} = req.params; 
         const { nombre, isAdmin } = req.body as {nombre: "String", isAdmin: boolean}; 
         const usuarioIndex = usuarios.findIndex((u)=>u.id_usuario===id_usuario);
 
-        if(usuarioIndex===-1) return rep.code(404).send({ error: "Usuario no encontrado" });
+        if(usuarioIndex===-1) return rep.code(404).send({
+          error: "Usuario no encontrado",
+          statusCode: 404,
+          message: "Usuario no encontrado"
+        });
         
         usuarios[usuarioIndex]={nombre, isAdmin, id_usuario};
         return rep.code(204).send();
@@ -67,26 +70,26 @@ const usuarioRoutes = async function(fastify: FastifyInstance, options: object) 
         summary: "Eliminar usuarios",
         description: "Esta ruta permite eliminar un nuevo usuario.",
         tags: ["usuarios"],
-        params: {
-        type: "object",
-        properties: {
-          id_usuario: { type: "number", minimum: 1 },
-        },
-        required: ["id_usuario"],
-        },
-        response: 204
-      } as FastifySchema,
+        params: Type.Pick(usuarioSchema, ["id_usuario"]),
+        response: {
+          204: Type.Null(),
+          404: ErrorSchema,
+        }
+      },
     },
     async function handler(req, rep) {
-        const { id_usuario } = req.params as {id_usuario: number}; 
+        const { id_usuario } = req.params; 
         
         const usuarioIndex = usuarios.findIndex((u)=>u.id_usuario===id_usuario);
         
-        if (usuarioIndex===-1) return rep.code(404).send({ error: "Usuario no encontrado" })
+        if (usuarioIndex===-1) return rep.code(404).send({
+          error: "Usuario no encontrado",
+          statusCode: 404,
+          message: "Usuario no encontrado"
+        })
         
-        usuarios.splice(usuarioIndex,1);
+        deleteUsuario(id_usuario)
         return rep.code(204).send()
-        
     }
   );
 }
