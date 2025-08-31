@@ -1,4 +1,3 @@
-import type { FastifyInstance, FastifySchema } from "fastify";
 import { usuarioSchema } from "../../../models/usuarios_model.ts";
 import { deleteUsuario, getUsuarios } from "../../../db/usuarios_db.ts";
 import {Null, Type } from "@fastify/type-provider-typebox";
@@ -44,7 +43,7 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
         params: Type.Pick(usuarioSchema, ["id_usuario"]),
         body: Type.Omit(usuarioSchema, ["id_usuario"]),
         response: {
-          204: Null,
+          204: Type.Null(),
           404: ErrorSchema,
         }
       },
@@ -73,7 +72,7 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
         tags: ["usuarios"],
         params: Type.Pick(usuarioSchema, ["id_usuario"]),
         response: {
-          204: Null,
+          204: Type.Null(),
           404: ErrorSchema,
         }
       },
