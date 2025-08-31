@@ -1,12 +1,12 @@
 import { usuarioSchema } from "../../../models/usuarios_model.ts";
-import { deleteUsuario, getUsuarios } from "../../../db/usuarios_db.ts";
+import { deleteUsuario, getUsuarioIndex, getUsuarioPorId, getUsuarios, putUsuario } from "../../../db/usuarios_db.ts";
 import {Null, Type } from "@fastify/type-provider-typebox";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"; 
 import { ErrorSchema } from "../../../models/shared_model.ts";
 
 
 const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: object) {
-  const usuarios = getUsuarios();// Todo tuyo Agus.
+  const usuarios = getUsuarios();
   fastify.get(
     "/usuarios/:id_usuario",
     {
@@ -23,7 +23,7 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
     },
     async function handler(req, rep) {
         const { id_usuario } = req.params;
-        const usuario = usuarios.find((u) => u.id_usuario === id_usuario);
+        const usuario = getUsuarioPorId(id_usuario);
         
         return (usuario) ? usuario : rep.code(404).send({
           error: "Usuario no encontrado",
@@ -50,16 +50,15 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
     },
     async function handler(req, rep) {
         const { id_usuario} = req.params; 
-        const { nombre, isAdmin } = req.body as {nombre: "String", isAdmin: boolean}; 
-        const usuarioIndex = usuarios.findIndex((u)=>u.id_usuario===id_usuario);
+        const { nombre, isAdmin } = req.body; 
+        const usuarioIndex = getUsuarioIndex(id_usuario);
 
         if(usuarioIndex===-1) return rep.code(404).send({
           error: "Usuario no encontrado",
           statusCode: 404,
           message: "Usuario no encontrado"
         });
-        
-        usuarios[usuarioIndex]={nombre, isAdmin, id_usuario};
+        putUsuario(usuarioIndex, nombre, isAdmin, id_usuario);
         return rep.code(204).send();
     }
   );
@@ -80,7 +79,7 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
     async function handler(req, rep) {
         const { id_usuario } = req.params; 
         
-        const usuarioIndex = usuarios.findIndex((u)=>u.id_usuario===id_usuario);
+        const usuarioIndex = getUsuarioIndex(id_usuario);
         
         if (usuarioIndex===-1) return rep.code(404).send({
           error: "Usuario no encontrado",

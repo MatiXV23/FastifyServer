@@ -7,6 +7,7 @@ const usuarios: Usuario[] = [
 ];
 
 let last_id_usuario: number = 3
+
 export function getUsuarios():Usuario[] {
     return usuarios
 }
@@ -24,8 +25,22 @@ export function getUsuarioPorId(id_usuario){
     return usuarios.find((u)=> u.id_usuario === id_usuario)
 }
 
+export function getUsuarioIndex(id_usuario){
+    return usuarios.findIndex((u)=>u.id_usuario===id_usuario)
+}
+
 export function deleteUsuario(id_usuario){
-    const usuarioIndex = usuarios.findIndex((u)=>u.id_usuario===id_usuario)
+    const usuarioIndex = getUsuarioIndex(id_usuario);
     usuarios.splice(usuarioIndex,1)
+    return
+}
+
+export function postUsuarioNuevo(postUser){
+    usuarios.push(postUser)
+    return
+}
+
+export function putUsuario(idx_usuario, nombre, isAdmin, id_usuario){
+    usuarios[idx_usuario] = {nombre, isAdmin, id_usuario} 
     return
 }

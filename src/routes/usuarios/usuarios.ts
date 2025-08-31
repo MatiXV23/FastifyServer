@@ -1,12 +1,12 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
 import { queryUsuarioSchema, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { Usuario } from "../../models/usuarios_model.ts";
-import { getUsuarios, getUltimoId, aumentarUltimoId } from "../../db/usuarios_db.ts";
+import { getUsuarios, getUltimoId, aumentarUltimoId, postUsuarioNuevo } from "../../db/usuarios_db.ts";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@fastify/type-provider-typebox";
 
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
-  const usuarios = getUsuarios(); // Todo tuyo Agus
+  const usuarios = getUsuarios(); 
   fastify.get(
     "/usuarios",
     {
@@ -49,7 +49,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
       aumentarUltimoId()
 
       const usuario = {nombre, isAdmin, id_usuario: getUltimoId()}
-      usuarios.push(usuario);
+      postUsuarioNuevo(usuario);
       rep.code(201);
       return usuario;
     }
