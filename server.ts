@@ -12,6 +12,16 @@ fastify.register(swagger)
 fastify.register(usuariosRoutes);
 fastify.register(usuarioRoutes)
 
+fastify.setErrorHandler((error, request, reply) => {
+    request.log.error(error);
+    const statusCode = error.statusCode || 500; 
+    reply.status(statusCode).send({
+        error: "Error del Servidor",
+        statusCode: statusCode,
+        message: "Ha ocurrido un error inesperado."
+    });
+});
+
 try {
     await fastify.listen({host:"::", port: 3000})
 } catch (error) {

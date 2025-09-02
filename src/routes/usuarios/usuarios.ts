@@ -4,6 +4,7 @@ import type { Usuario } from "../../models/usuarios_model.ts";
 import { getUsuarios, getUltimoId, aumentarUltimoId, postUsuarioNuevo } from "../../db/usuarios_db.ts";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@fastify/type-provider-typebox";
+import { ErrorSchema } from "../../models/shared_model.ts";
 
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
   const usuarios = getUsuarios(); 
@@ -16,7 +17,8 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         tags: ["usuarios"],
         querystring: queryUsuarioSchema,
         response: {
-            200: Type.Array(usuarioSchema)
+            200: Type.Array(usuarioSchema),
+            500: ErrorSchema,
         }
       },
     },
@@ -41,6 +43,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         body: Type.Omit(usuarioSchema,["id_usuario"]),
         response: {
             201: usuarioSchema,
+            500: ErrorSchema
         }
       },
     },
