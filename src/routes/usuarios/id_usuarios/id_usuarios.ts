@@ -1,5 +1,5 @@
 import { usuarioSchema } from "../../../models/usuarios_model.ts";
-import { deleteUsuario, getUsuarioIndex, getUsuarioPorId, getUsuarios, putUsuario } from "../../../db/usuarios_db.ts";
+import { deleteUsuario, getUsuarioIndex, getUsuarioPorId, getUsuarios, putUsuario } from "../../../services/usuarios_db_services.ts";
 import {Null, Type } from "@fastify/type-provider-typebox";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"; 
 import { ErrorSchema } from "../../../models/shared_model.ts";
