@@ -7,7 +7,7 @@ import { PC_Error } from "./src/errors/errors.ts";
 
 const fastify = Fastify({
     logger: {
-        level: 'info',
+        level: 'trace',
         transport: {
             target: 'pino-pretty',
             options: {
