@@ -45,13 +45,14 @@ ___
 #### Click en la imagen para ver el video.
 [![Mira el video](https://i.postimg.cc/MpXdL38k/Servidor-Web-con-Fastify-y-Type-Script.png)](https://youtu.be/_NecF8xg9y0)
 ___
-## 💬 Anexos 💬
+# 💬 Anexos 💬
 ### En este espacio agregaremos herramientas adicionales y notas sobre el proyecto
-
+___
+### 📎 Herramienta de gestion del proyecto 📎
+[![Accede a jira](https://expansionyeconomia.com/wp-content/uploads/2025/01/jira-1024x531.webp)](https://webdev-cnp.atlassian.net/jira/software/projects/PC/boards/34)
+___
 ### 🙋 Integrantes 🙋
   -  Agustin Cigaran
   -  Brahian Nuñez
   -  Matias Perez
-
-### 📎 Herramienta de gestion del proyecto 📎
-[![Accede a jira](https://expansionyeconomia.com/wp-content/uploads/2025/01/jira-1024x531.webp)](https://webdev-cnp.atlassian.net/jira/software/projects/PC/boards/34)
+___
