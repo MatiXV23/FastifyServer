@@ -3,6 +3,7 @@ import usuariosRoutes from "./src/routes/usuarios/usuarios.ts";
 import swagger from "./src/plugins/swagger.ts";
 import usuarioRoutes from "./src/routes/usuarios/id_usuarios/id_usuarios.ts";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import { PC_Error } from "./src/errors/errors.ts";
 
 const fastify = Fastify({
     logger: true
@@ -12,13 +13,13 @@ fastify.register(swagger)
 fastify.register(usuariosRoutes);
 fastify.register(usuarioRoutes)
 
-fastify.setErrorHandler((error, request, reply) => {
-    request.log.error(error);
-    const statusCode = error.statusCode || 500; 
-    reply.status(statusCode).send({
-        error: "Error del Servidor",
-        statusCode: statusCode,
-        message: "Ha ocurrido un error inesperado."
+fastify.setErrorHandler((err: PC_Error, request, reply) => {
+    request.log.error(err);
+
+    reply.status(err.statusCode).send({
+        error: err.error,
+        statusCode: err.statusCode,
+        message: err.message
     });
 });
 

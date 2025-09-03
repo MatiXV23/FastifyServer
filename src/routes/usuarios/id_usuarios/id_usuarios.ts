@@ -17,32 +17,12 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
         params: Type.Pick(usuarioSchema, ["id_usuario"]),
         response: {
             200: usuarioSchema,
-            404: ErrorSchema,
-            500: ErrorSchema,
         }
       },
     },
     async function handler(req, rep) {
-        try{
         const { id_usuario } = req.params;
-        const usuario = getUsuarioPorId(id_usuario);
-        
-          if (!usuario){
-              return rep.code(404).send({
-                  error: "Usuario no encontrado",
-          statusCode: 404,
-          message: "Usuario no encontrado"
-              });
-          }
-        return usuario;
-        } catch(err){
-          req.log.error(err);
-          return rep.code(500).send({
-              error: "Error interno del servideor",
-              statusCode: 500,
-              message: "Ha ocurrido un error inesperado"
-          });
-        }
+        return getUsuarioPorId(id_usuario);
     }
     
   );

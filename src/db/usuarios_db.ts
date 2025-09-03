@@ -1,4 +1,5 @@
-import type { Usuario } from "../models/usuarios_model";
+import type { Usuario } from "../models/usuarios_model.ts";
+import { PC_NotFound } from "../errors/errors.ts";
 
 const usuarios: Usuario[] = [
     {  nombre: "Agustin", isAdmin: false, id_usuario: 1 },
@@ -22,7 +23,10 @@ export function aumentarUltimoId(){
 }
 
 export function getUsuarioPorId(id_usuario){
-    return usuarios.find((u)=> u.id_usuario === id_usuario)
+    const usuario = usuarios.find((u)=> u.id_usuario === id_usuario)
+
+    if (usuario) return usuario
+    throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`)
 }
 
 export function getUsuarioIndex(id_usuario){
