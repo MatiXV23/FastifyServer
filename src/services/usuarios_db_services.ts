@@ -13,40 +13,63 @@ export function getUsuarios():Usuario[] {
     return usuarios
 }
 
-export function getUltimoId():number{
+function getUltimoId():number{
     return last_id_usuario
 }
 
-export function aumentarUltimoId(){
+function aumentarUltimoId(){
     last_id_usuario++
     return
 }
 
 export function getUsuarioPorId(id_usuario){
-    const usuario = usuarios.find((u)=> u.id_usuario === id_usuario)
+    const index = getUsuarioIndex(id_usuario); 
 
-    if (usuario) return usuario
-    throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`)
+    if (index === -1) {
+        throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`);
+    }
+    
+    return usuarios[index]
 }
 
-export function getUsuarioIndex(id_usuario){
+function getUsuarioIndex(id_usuario){
     return usuarios.findIndex((u)=>u.id_usuario===id_usuario)
 }
 
 export function deleteUsuario(id_usuario) {
     const index = getUsuarioIndex(id_usuario); 
+
     if (index === -1) {
-    throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`);
+        throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`);
     }
+
     usuarios.splice(index, 1);
 }
 
-export function postUsuarioNuevo(postUser){
-    usuarios.push(postUser)
-    return
+export function postUsuarioNuevo(name, is_admin){
+    aumentarUltimoId()
+    const usuario: Usuario = {
+        nombre: name,
+        isAdmin: is_admin,
+        id_usuario: getUltimoId()
+    }
+
+    usuarios.push(usuario)
+    return usuario
 }
 
-export function putUsuario(idx_usuario, nombre, isAdmin, id_usuario){
-    usuarios[idx_usuario] = {nombre, isAdmin, id_usuario} 
+export function putUsuario(nombre, isAdmin, id_usuario){
+    const index = getUsuarioIndex(id_usuario); 
+
+    if (index === -1) {
+        throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`);
+    }
+
+    const modUser: Usuario = {
+        nombre: nombre,
+        isAdmin: isAdmin,
+        id_usuario: id_usuario
+    }
+    usuarios[index] = modUser
     return
 }

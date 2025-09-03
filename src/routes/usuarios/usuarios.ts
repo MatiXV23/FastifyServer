@@ -1,10 +1,11 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
 import { queryUsuarioSchema, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { Usuario } from "../../models/usuarios_model.ts";
-import { getUsuarios, getUltimoId, aumentarUltimoId, postUsuarioNuevo } from "../../services/usuarios_db_services.ts";
+import { getUsuarios, postUsuarioNuevo } from "../../services/usuarios_db_services.ts";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@fastify/type-provider-typebox";
 import { ErrorSchema } from "../../models/shared_model.ts";
+import { PC_BadRequest } from "../../errors/errors.ts";
 
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
   const usuarios = getUsuarios(); 
@@ -17,8 +18,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         tags: ["usuarios"],
         querystring: queryUsuarioSchema,
         response: {
-            200: Type.Array(usuarioSchema),
-            500: ErrorSchema,
+            200: Type.Array(usuarioSchema)
         }
       },
     },
@@ -42,17 +42,15 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         tags: ["usuarios"],
         body: Type.Omit(usuarioSchema,["id_usuario"]),
         response: {
-            201: usuarioSchema,
-            500: ErrorSchema
+            201: usuarioSchema
         }
       },
     },
     async function handler(req, rep) {
-      const { nombre, isAdmin } = req.body; 
-      aumentarUltimoId()
+      const { nombre, isAdmin } = req.body;
+      if (!nombre || !isAdmin) throw new PC_BadRequest()
 
-      const usuario = {nombre, isAdmin, id_usuario: getUltimoId()}
-      postUsuarioNuevo(usuario);
+      const usuario = postUsuarioNuevo(nombre, isAdmin);
       rep.code(201);
       return usuario;
     }

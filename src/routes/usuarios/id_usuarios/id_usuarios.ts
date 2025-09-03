@@ -1,5 +1,5 @@
 import { usuarioSchema } from "../../../models/usuarios_model.ts";
-import { deleteUsuario, getUsuarioIndex, getUsuarioPorId, getUsuarios, putUsuario } from "../../../services/usuarios_db_services.ts";
+import { deleteUsuario, getUsuarioPorId, putUsuario } from "../../../services/usuarios_db_services.ts";
 import {Null, Type } from "@fastify/type-provider-typebox";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"; 
 import { ErrorSchema } from "../../../models/shared_model.ts";
@@ -16,20 +16,13 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
         tags: ["usuarios"],
         params: Type.Pick(usuarioSchema, ["id_usuario"]),
         response: {
-            200: usuarioSchema,
-            404: ErrorSchema,
+            200: usuarioSchema
         }
       },
     },
     async function handler(req, rep) {
-        const { id_usuario } = req.params;
-        const usuario = getUsuarioPorId(id_usuario);
-        
-        return (usuario) ? usuario : rep.code(404).send({
-          error: "Usuario no encontrado",
-          statusCode: 404,
-          message: "Usuario no encontrado"
-        });
+      const { id_usuario } = req.params;
+      return getUsuarioPorId(id_usuario);
     }
   );
   fastify.put(
@@ -42,23 +35,16 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
         params: Type.Pick(usuarioSchema, ["id_usuario"]),
         body: Type.Omit(usuarioSchema, ["id_usuario"]),
         response: {
-          204: Type.Null(),
-          404: ErrorSchema,
+          204: Type.Null()
         }
       },
     },
     async function handler(req, rep) {
-        const { id_usuario} = req.params; 
-        const { nombre, isAdmin } = req.body; 
-        const usuarioIndex = getUsuarioIndex(id_usuario);
-
-        if(usuarioIndex===-1) return rep.code(404).send({
-          error: "Usuario no encontrado",
-          statusCode: 404,
-          message: "Usuario no encontrado"
-        });
-        putUsuario(usuarioIndex, nombre, isAdmin, id_usuario);
-        return rep.code(204).send();
+      const { id_usuario} = req.params; 
+      const { nombre, isAdmin } = req.body; 
+      
+      putUsuario( nombre, isAdmin, id_usuario);
+      return rep.code(204).send();
     }
   );
   fastify.delete(
@@ -70,15 +56,14 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
         tags: ["usuarios"],
         params: Type.Pick(usuarioSchema, ["id_usuario"]),
         response: {
-          204: Type.Null(),
-          404: ErrorSchema,
+          204: Type.Null()
         }
       },
     },
     async function handler(req, rep) {
-    const { id_usuario } = req.params;    
-    deleteUsuario(id_usuario);
-    return rep.code(204).send();
+      const { id_usuario } = req.params;
+      deleteUsuario(id_usuario);
+      return rep.code(204).send();
     }
   );
 }
