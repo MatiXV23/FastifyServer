@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
 import { queryUsuarioSchema, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { Usuario } from "../../models/usuarios_model.ts";
-import { getUsuarios, getUltimoId, aumentarUltimoId, postUsuarioNuevo } from "../../db/usuarios_db.ts";
+import { getUsuarios, getUltimoId, aumentarUltimoId, postUsuarioNuevo } from "../../services/usuarios_db_services.ts";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@fastify/type-provider-typebox";
 import { ErrorSchema } from "../../models/shared_model.ts";
