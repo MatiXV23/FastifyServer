@@ -20,13 +20,17 @@ ___
   - **DELETE**: Eliminar un usuario especifico según su id *"/usuarios/:id_usuarios"*
 ___
 ## 🚀 Ejecución del proyecto 🚀
+
 ### 📡 Servidor 📡
 #### Dentro del proyecto es posible ejecutar el servidor:
+
  - npm run dev
    - Esto ejecuta el script =>  "dev": "npm install && node --watch server.ts" <= definido dentro del package-json
 #### Luego de ejecutar el servidor ya podremos hacerle las peticiones
+
 ### 📲 Cliente 📲
 #### Para ver los metodos creados en el cliente se encuentra en la ruta "./src/routes/usuarios/usuarios.ts". Es necesario seguir los siguientes pasos
+
 - Luego de iniciar el servidor
   - Ingresar en la url localhost:3000/docs/
   - Veremos los metodos (CRUD) listados en la parte inferior de la pantalla.
@@ -40,3 +44,14 @@ ___
 ### A continuación video demostración del proyecto.
 #### Click en la imagen para ver el video.
 [![Mira el video](https://i.postimg.cc/MpXdL38k/Servidor-Web-con-Fastify-y-Type-Script.png)](https://youtu.be/_NecF8xg9y0)
+___
+## 💬 Anexos 💬
+### En este espacio agregaremos herramientas adicionales y notas sobre el proyecto
+
+### 🙋 Integrantes 🙋
+  -  Agustin Cigaran
+  -  Brahian Nuñez
+  -  Matias Perez
+
+### 📎 Herramienta de gestion del proyecto 📎
+[![Accede a jira](https://expansionyeconomia.com/wp-content/uploads/2025/01/jira-1024x531.webp)](https://webdev-cnp.atlassian.net/jira/software/projects/PC/boards/34)
