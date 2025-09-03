@@ -18,8 +18,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         tags: ["usuarios"],
         querystring: queryUsuarioSchema,
         response: {
-            200: Type.Array(usuarioSchema),
-            500: ErrorSchema,
+            200: Type.Array(usuarioSchema)
         }
       },
     },
@@ -43,8 +42,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         tags: ["usuarios"],
         body: Type.Omit(usuarioSchema,["id_usuario"]),
         response: {
-            201: usuarioSchema,
-            500: ErrorSchema
+            201: usuarioSchema
         }
       },
     },

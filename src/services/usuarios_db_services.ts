@@ -24,9 +24,11 @@ function aumentarUltimoId(){
 
 export function getUsuarioPorId(id_usuario){
     const index = getUsuarioIndex(id_usuario); 
+
     if (index === -1) {
         throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`);
     }
+    
     return usuarios[index]
 }
 
@@ -36,9 +38,11 @@ function getUsuarioIndex(id_usuario){
 
 export function deleteUsuario(id_usuario) {
     const index = getUsuarioIndex(id_usuario); 
+
     if (index === -1) {
         throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`);
     }
+
     usuarios.splice(index, 1);
 }
 
@@ -49,15 +53,23 @@ export function postUsuarioNuevo(name, is_admin){
         isAdmin: is_admin,
         id_usuario: getUltimoId()
     }
+
     usuarios.push(usuario)
     return usuario
 }
 
 export function putUsuario(nombre, isAdmin, id_usuario){
     const index = getUsuarioIndex(id_usuario); 
+
     if (index === -1) {
         throw new PC_NotFound(`Usuario con id ${id_usuario}, no encontrado`);
     }
-    usuarios[index] = {nombre, isAdmin, id_usuario} 
+
+    const modUser: Usuario = {
+        nombre: nombre,
+        isAdmin: isAdmin,
+        id_usuario: id_usuario
+    }
+    usuarios[index] = modUser
     return
 }
