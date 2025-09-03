@@ -77,18 +77,9 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
       },
     },
     async function handler(req, rep) {
-        const { id_usuario } = req.params; 
-        
-        const usuarioIndex = getUsuarioIndex(id_usuario);
-        
-        if (usuarioIndex===-1) return rep.code(404).send({
-          error: "Usuario no encontrado",
-          statusCode: 404,
-          message: "Usuario no encontrado"
-        })
-        
-        deleteUsuario(id_usuario)
-        return rep.code(204).send()
+    const { id_usuario } = req.params;    
+    deleteUsuario(id_usuario);
+    return rep.code(204).send();
     }
   );
 }
