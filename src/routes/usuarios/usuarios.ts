@@ -8,6 +8,7 @@ import { ErrorSchema } from "../../models/shared_model.ts";
 
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
   const usuarios = getUsuarios(); 
+  
   fastify.get(
     "/usuarios",
     {
@@ -18,11 +19,13 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         querystring: queryUsuarioSchema,
         response: {
             200: Type.Array(usuarioSchema),
-            500: ErrorSchema,
+            400: ErrorSchema,
+            500: ErrorSchema
         }
       },
     },
     async function handler(req, rep) {
+      throw new Error("Simulando un error inesperado.");
       const query = req.query;
       let users = getUsuarios()
       
@@ -33,6 +36,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
       return users;
     }
   );
+
   fastify.post(
     "/usuarios",
     {
@@ -40,21 +44,32 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
         summary: "Crear usuarios",
         description: "Esta ruta permite crear un nuevo usuario.",
         tags: ["usuarios"],
-        body: Type.Omit(usuarioSchema,["id_usuario"]),
+        body: Type.Omit(usuarioSchema, ["id_usuario"]),
         response: {
-            201: usuarioSchema,
-            500: ErrorSchema
+          201: usuarioSchema,
+          400: ErrorSchema,
+          500: ErrorSchema
         }
       },
     },
     async function handler(req, rep) {
       const { nombre, isAdmin } = req.body; 
-      aumentarUltimoId()
-
-      const usuario = {nombre, isAdmin, id_usuario: getUltimoId()}
+      
+      if (!nombre || nombre.trim() === '') {
+        throw new Error('El nombre del usuario es requerido y no puede estar vacío');
+      }
+      
+      aumentarUltimoId();
+      
+      const usuario = {
+        nombre: nombre.trim(),
+        isAdmin, 
+        id_usuario: getUltimoId()
+      };
+      
       postUsuarioNuevo(usuario);
-      rep.code(201);
-      return usuario;
+    
+      return rep.code(201).send(usuario);
     }
   );
 }

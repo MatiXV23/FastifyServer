@@ -12,12 +12,21 @@ fastify.register(swagger)
 fastify.register(usuariosRoutes);
 fastify.register(usuarioRoutes)
 
+
 fastify.setErrorHandler((error, request, reply) => {
+    if (error.message.toLowerCase().includes("no encontrado") || 
+        error.message.toLowerCase().includes("not found") ||
+        error.statusCode === 404){
+        return reply.status(404).send({
+            statusCode: 404,
+            error: "Not Found",
+            message: error.message
+        });
+    }
     request.log.error(error);
-    const statusCode = error.statusCode || 500; 
-    reply.status(statusCode).send({
-        error: "Error del Servidor",
-        statusCode: statusCode,
+    reply.status(500).send({
+        statusCode: 500,
+        error: "Internal Server Error",
         message: "Ha ocurrido un error inesperado."
     });
 });
