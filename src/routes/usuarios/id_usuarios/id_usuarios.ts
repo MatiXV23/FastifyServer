@@ -3,6 +3,7 @@ import { deleteUsuario, getUsuarioPorId, putUsuario } from "../../../services/us
 import {Null, Type } from "@fastify/type-provider-typebox";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"; 
 import { ErrorSchema } from "../../../models/shared_model.ts";
+import { PC_BadRequest } from "../../../errors/errors.ts";
 
 
 const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: object) {
@@ -33,16 +34,19 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
         description: "Esta ruta permite modificar un nuevo usuario.",
         tags: ["usuarios"],
         params: Type.Pick(usuarioSchema, ["id_usuario"]),
-        body: Type.Omit(usuarioSchema, ["id_usuario"]),
+        body: usuarioSchema,
         response: {
           204: Type.Null()
         }
       },
     },
     async function handler(req, rep) {
-      const { id_usuario} = req.params; 
+      const { id_usuario } = req.params; 
       const { nombre, isAdmin } = req.body; 
-      
+      const id_body = req.body.id_usuario 
+
+      if (id_usuario !== id_body) throw new PC_BadRequest("Las ids del body y pasada por parametro, no coinciden.")
+        
       putUsuario( nombre, isAdmin, id_usuario);
       return rep.code(204).send();
     }
