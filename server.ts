@@ -23,7 +23,7 @@ fastify.register(usuariosRoutes);
 fastify.register(usuarioRoutes)
 
 fastify.setErrorHandler((err: PC_Error, request, reply) => {
-    request.log.error(err);
+    fastify.log.error(err);
 
     reply.status(err.statusCode).send({
         error: err.error,
@@ -34,7 +34,7 @@ fastify.setErrorHandler((err: PC_Error, request, reply) => {
 
 try {
     await fastify.listen({host:"::", port: 3000})
-    fastify.log.info('Buenas buenas, estoy escuchando en http://localhost:3000')
+    fastify.log.info('Buenas buenas, estoy escuchando en: http://localhost:3000')
 } catch (error) {
     fastify.log.error(error)
     process.exit(1)
