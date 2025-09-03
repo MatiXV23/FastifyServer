@@ -24,11 +24,31 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
       const query = req.query;
       let users = getUsuarios()
       
-      if (query.nombre)  users = users.filter((u) => u.nombre == query.nombre);
-      if (query.id_usuario) users = users.filter((u) => u.id_usuario == query.id_usuario);
-      if (query.isAdmin || query.isAdmin === false) users = users.filter((u) => u.isAdmin == query.isAdmin);
+      fastify.log.info({
+                method: req.method,
+                url: req.url,
+                query: query,
+                userAgent: req.headers['user-agent'],
+                ip: req.ip
+              }, 'El cliente realizo la consulta GET');
+            
+              if (query.nombre) {
+                users = users.filter((u) => u.nombre == query.nombre);
+                fastify.log.debug({ filtro: 'nombre', valor: query.nombre }, 'Aplicando filtro por nombre');
+              }
 
-      return users;
+              if (query.id_usuario){
+                users = users.filter((u) => u.id_usuario == query.id_usuario);
+                        fastify.log.debug({ filtro: 'id_usuario', valor: query.id_usuario }, 'Aplicando filtro por ID');
+              }
+              
+              if (query.isAdmin !== undefined) {
+                users = users.filter((u) => u.isAdmin == query.isAdmin);
+                fastify.log.debug({ filtro: 'isAdmin', valor: query.isAdmin }, 'Aplicando filtro por Admin');
+              }
+
+              fastify.log.info({ resultados: users.length }, 'Consulta completada exitosamente');
+    return users;
     }
   );
   fastify.post(
@@ -47,11 +67,30 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
     async function handler(req, rep) {
       const { nombre, isAdmin } = req.body; 
       aumentarUltimoId()
+      fastify.log.info({
+                method: req.method,
+                url: req.url,
+                // body: req.body,
+                userAgent: req.headers['user-agent'],
+                ip: req.ip
+              }, 'El cliente realizo la consulta POST');
 
-      const usuario = {nombre, isAdmin, id_usuario: getUltimoId()}
-      postUsuarioNuevo(usuario);
-      rep.code(201);
-      return usuario;
+              fastify.log.info({ filtro: nombre, valor: nombre}, 'Nombre del nuevo usuario POST')
+              fastify.log.info({ filtro: isAdmin, valor: isAdmin}, 'Condición de administrador del nuevo usuario POST')
+              const usuario = {nombre, isAdmin, id_usuario: getUltimoId()}
+              postUsuarioNuevo(usuario);
+              rep.code(201);
+              return usuario;
+              // if (query.nombre) {
+              //   users = users.filter((u) => u.nombre == query.nombre);
+              //   fastify.log.debug({ filtro: 'nombre', valor: query.nombre }, 'Aplicando filtro por nombre');
+              // }
+
+      // const usuario = {nombre, isAdmin, id_usuario: getUltimoId()}
+      // postUsuarioNuevo(usuario);
+      // rep.code(201);
+      // fastify.log.info('Fue realizada una consulta POST.'); // comentario con pino-pretty
+      // return usuario;
     }
   );
 }
