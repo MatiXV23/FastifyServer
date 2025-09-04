@@ -3,7 +3,7 @@ import usuariosRoutes from "./src/routes/usuarios/usuarios.ts";
 import swagger from "./src/plugins/swagger.ts";
 import usuarioRoutes from "./src/routes/usuarios/id_usuarios/id_usuarios.ts";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
-import { PC_Error } from "./src/errors/errors.ts";
+import { PC_Error, PC_InternalServerError } from "./src/errors/errors.ts";
 
 const fastify = Fastify({
     logger: {
@@ -23,6 +23,7 @@ fastify.register(usuariosRoutes);
 fastify.register(usuarioRoutes)
 
 fastify.setErrorHandler((err: PC_Error, request, reply) => {
+    if (!(err instanceof PC_Error)) err = new PC_InternalServerError()
     fastify.log.error(err);
 
     reply.status(err.statusCode).send({
