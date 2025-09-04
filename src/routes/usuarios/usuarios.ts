@@ -1,10 +1,7 @@
-import type { FastifyInstance, FastifySchema } from "fastify";
 import { queryUsuarioSchema, usuarioSchema } from "../../models/usuarios_model.ts";
-import type { Usuario } from "../../models/usuarios_model.ts";
 import { usuariosDB } from "../../services/usuarios_db_services.ts";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@fastify/type-provider-typebox";
-import { ErrorSchema } from "../../models/shared_model.ts";
 import { PC_BadRequest } from "../../errors/errors.ts";
 
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) { 
