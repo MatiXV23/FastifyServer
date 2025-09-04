@@ -1,14 +1,13 @@
 import type { FastifyInstance, FastifySchema } from "fastify";
 import { queryUsuarioSchema, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { Usuario } from "../../models/usuarios_model.ts";
-import { getUsuarios, postUsuarioNuevo } from "../../services/usuarios_db_services.ts";
+import { usuariosDB } from "../../services/usuarios_db_services.ts";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@fastify/type-provider-typebox";
 import { ErrorSchema } from "../../models/shared_model.ts";
 import { PC_BadRequest } from "../../errors/errors.ts";
 
-const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
-  const usuarios = getUsuarios(); 
+const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, options: object) { 
   fastify.get(
     "/usuarios",
     {
@@ -24,7 +23,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
     },
     async function handler(req, rep) {
       const query = req.query;
-      let users = getUsuarios()
+      let users = await usuariosDB.getAll()
       
       if (query.nombre)  users = users.filter((u) => u.nombre == query.nombre);
       if (query.id_usuario) users = users.filter((u) => u.id_usuario == query.id_usuario);
@@ -50,7 +49,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
       const { nombre, isAdmin } = req.body;
       if (!nombre || !isAdmin) throw new PC_BadRequest()
 
-      const usuario = postUsuarioNuevo(nombre, isAdmin);
+      const usuario = await usuariosDB.create({nombre:nombre, isAdmin:isAdmin});
       rep.code(201);
       return usuario;
     }
