@@ -4,6 +4,7 @@ import swagger from "./src/plugins/swagger.ts";
 import usuarioRoutes from "./src/routes/usuarios/id_usuarios/id_usuarios.ts";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PC_Error } from "./src/errors/errors.ts";
+import auth from "./src/routes/auth/auth.ts";
 
 const fastify = Fastify({
     logger: {
@@ -21,6 +22,7 @@ const fastify = Fastify({
 fastify.register(swagger)
 fastify.register(usuariosRoutes);
 fastify.register(usuarioRoutes)
+fastify.register(auth);
 
 fastify.setErrorHandler((err: PC_Error, request, reply) => {
     fastify.log.error(err);
