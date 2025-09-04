@@ -1,8 +1,7 @@
 import { usuarioSchema } from "../../../models/usuarios_model.ts";
-import { deleteUsuario, getUsuarioPorId, putUsuario } from "../../../services/usuarios_db_services.ts";
-import {Null, Type } from "@fastify/type-provider-typebox";
-import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"; 
-import { ErrorSchema } from "../../../models/shared_model.ts";
+import { usuariosDB } from "../../../services/usuarios_db_services.ts";
+import { Type } from "@fastify/type-provider-typebox";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { PC_BadRequest } from "../../../errors/errors.ts";
 
 
@@ -23,7 +22,7 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
     },
     async function handler(req, rep) {
       const { id_usuario } = req.params;
-      return getUsuarioPorId(id_usuario);
+      return usuariosDB.getById(id_usuario);
     }
   );
   fastify.put(
@@ -48,7 +47,7 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
       if (id_usuario !== id_body) throw new PC_BadRequest("Las ids del body y pasada por parametro, no coinciden.")
       if (typeof(isAdmin) != "boolean")  throw new PC_BadRequest("El parametro isAdmin debe ser un Boolean.")
         
-      putUsuario( nombre, isAdmin, id_usuario);
+      usuariosDB.update(id_usuario, { nombre: nombre, isAdmin: isAdmin});
       return rep.code(204).send();
     }
   );
@@ -67,7 +66,7 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
     },
     async function handler(req, rep) {
       const { id_usuario } = req.params;
-      deleteUsuario(id_usuario);
+      usuariosDB.delete(id_usuario);
       return rep.code(204).send();
     }
   );
