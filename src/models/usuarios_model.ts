@@ -14,8 +14,3 @@ export const queryUsuarioSchema = Type.Object({
 })
 
 export type Usuario = Static<typeof usuarioSchema>
-
-
-
-
-
