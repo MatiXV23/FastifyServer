@@ -20,13 +20,8 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
     },
     async function handler(req, rep) {
       const query = req.query;
-      let users = await usuariosDB.getAll()
-      
-      if (query.nombre)  users = users.filter((u) => u.nombre == query.nombre);
-      if (query.id_usuario) users = users.filter((u) => u.id_usuario == query.id_usuario);
-      if (query.isAdmin || query.isAdmin === false) users = users.filter((u) => u.isAdmin == query.isAdmin);
 
-      return users;
+      return usuariosDB.findAll({nombre: query.nombre, isAdmin: query.isAdmin, id_usuario: query.id_usuario})
     }
   );
   fastify.post(

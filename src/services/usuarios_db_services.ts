@@ -1,6 +1,8 @@
 import type { Usuario } from "../models/usuarios_model.ts";
 import { PC_NotFound } from "../errors/errors.ts";
 import { BaseRepository } from "./baseRepository.ts";
+import fastify from "fastify";
+import { Null } from "@fastify/type-provider-typebox";
 
 
 class UsuariosDB extends BaseRepository<Usuario> {
@@ -8,7 +10,8 @@ class UsuariosDB extends BaseRepository<Usuario> {
         {  nombre: "Agustin", isAdmin: false, id_usuario: 1 },
         {  nombre: "Matias", isAdmin: true, id_usuario: 2 },
         {  nombre: "Brahian", isAdmin: false , id_usuario: 3 },
-    ];
+    ]
+
     #lastId: number = 3
 
     #getUsuarioIndex(id){
@@ -65,6 +68,30 @@ class UsuariosDB extends BaseRepository<Usuario> {
         }
 
         this.#usuarios.splice(index, 1);
+    }
+
+    async findAll(data?: Partial<Usuario>): Promise<Usuario[]> {
+        let result: Usuario[] = this.#usuarios
+
+        if (!data) return result
+        
+        for (const key in data){
+            if (data[key] === undefined) continue
+            result = result.filter((u)=> u[key] === data[key])
+        }
+        return result
+    }
+
+    async getFirstBy(data: Partial<Usuario>): Promise<Usuario | undefined> {
+        
+        const finded: Usuario | undefined = this.#usuarios.find((u)=> {
+            for (const key in data){
+                if (data[key] !== u[key]) return false
+            }
+            return true
+        })
+        
+        return finded
     }
 }
 
