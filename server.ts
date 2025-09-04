@@ -1,9 +1,11 @@
-import Fastify, { FastifyListenOptions } from "fastify";
+import Fastify from "fastify";
+import type { FastifyListenOptions } from "fastify";
 import usuariosRoutes from "./src/routes/usuarios/usuarios.ts";
 import swagger from "./src/plugins/swagger.ts";
 import usuarioRoutes from "./src/routes/usuarios/id_usuarios/id_usuarios.ts";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PC_Error, PC_InternalServerError } from "./src/errors/errors.ts";
+import auth from "./src/routes/usuarios/auth/auth.ts";
 
 const fastify = Fastify({
     logger: {
@@ -19,8 +21,9 @@ const fastify = Fastify({
 }).withTypeProvider<TypeBoxTypeProvider>()
 
 fastify.register(swagger)
-fastify.register(usuariosRoutes);
+fastify.register(usuariosRoutes)
 fastify.register(usuarioRoutes)
+fastify.register(auth)
 
 fastify.setErrorHandler((err: PC_Error, request, reply) => {
     if (!(err instanceof PC_Error)) err = new PC_InternalServerError()
