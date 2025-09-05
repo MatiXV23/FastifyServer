@@ -3,6 +3,9 @@ import { Type } from "@fastify/type-provider-typebox";
 import { PC_NoAuthorized } from "../../errors/errors.ts";
 import { type Usuario, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { SignOptions } from "jsonwebtoken";
+import jwt from "@fastify/jwt";
+import { usuariosDB } from "../../services/usuarios_db_services.ts";
+import { userInfo } from "os";
 
 const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
   fastify.post(
@@ -13,7 +16,7 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         description: "Esta ruta permite que el usuario se logee.",
         tags: ["auth"],
         body: Type.Object({
-            usuario: Type.String(),
+            userName: Type.String(),
             password: Type.String()
         }),
         response: {
@@ -25,18 +28,17 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
       },
     
     handler: async function (req, rep) {
-      const { usuario, password } = req.body
-      if (password != 'clave' || !usuario) 
-        throw new PC_NoAuthorized("No estás autorizado.");
+      const { userName, password } = req.body
+      const cuentaPayload = await  usuariosDB.getAccountByCredentials({ userName, password});
     
-      const payload: Usuario = {
-        nombre: "Bolacha",
-        isAdmin: true,
-        id_usuario: 0
-      }
+      if (!cuentaPayload) {
+          throw new PC_NoAuthorized("Credenciales inválidas.");
+        }
+
+      const payload: Usuario = cuentaPayload.usuario;
+
       const signOptions: SignOptions = {
         expiresIn: "8h",
-        notBefore: 100,
       }
       const token = fastify.jwt.sign(payload, signOptions);
       return { token: token}
@@ -50,6 +52,16 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         summary: "Perfil del usuario",
         description: "Esta ruta permite ver el perfil del Usuario.",
         tags: ["auth"],
+        response: {
+        200: Type.Intersect([
+    usuarioSchema,
+    Type.Object({
+      iat: Type.Optional(Type.Number()),
+      exp: Type.Optional(Type.Number()),
+      nbf: Type.Optional(Type.Number())
+    })
+  ]) 
+      },
         security: [
             { bearerAuth: [] }
         ],
@@ -58,9 +70,17 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         await req.jwtVerify();
       },
     handler: async function (req, rep) {
-      return req.user;
+      const { nombre, isAdmin, id_usuario, iat, exp, nbf } = req.user;
+      return { nombre, isAdmin, id_usuario, iat, exp, nbf };
     }
-})
+  })
 }
 
 export default auth;
+
+declare module "@fastify/jwt" {
+  interface FastifyJWT {
+    payload: Usuario; 
+    user: Usuario & { iat?: number; exp?: number; nbf?: number }; 
+  }
+}
