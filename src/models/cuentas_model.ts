@@ -1,4 +1,4 @@
-import { usuarioSchema } from "./usuarios_model"
+import { usuarioSchema } from "./usuarios_model.ts"
 import { Type } from '@sinclair/typebox'
 import type { Static } from '@sinclair/typebox'
 

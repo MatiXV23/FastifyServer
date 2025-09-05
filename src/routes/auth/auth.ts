@@ -3,6 +3,9 @@ import { Type } from "@fastify/type-provider-typebox";
 import { PC_NoAuthorized } from "../../errors/errors.ts";
 import { type Usuario, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { SignOptions } from "jsonwebtoken";
+import jwt from "@fastify/jwt";
+import { usuariosDB } from "../../services/usuarios_db_services.ts";
+import { cuentaSchema } from "../../models/cuentas_model.ts";
 
 const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
   fastify.post(
@@ -12,10 +15,7 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         summary: "Logearse",
         description: "Esta ruta permite que el usuario se logee.",
         tags: ["auth"],
-        body: Type.Object({
-            usuario: Type.String(),
-            password: Type.String()
-        }),
+        body: Type.Omit(cuentaSchema, ["usuario"]),
         response: {
             200: { tokenPrueba : Type.String()}
         },
@@ -25,18 +25,16 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
       },
     
     handler: async function (req, rep) {
-      const { usuario, password } = req.body
-      if (password != 'clave' || !usuario) 
-        throw new PC_NoAuthorized("No estás autorizado.");
+      const cuentaPayload = await  usuariosDB.getAccountByCredentials(req.body);
     
-      const payload: Usuario = {
-        nombre: "Bolacha",
-        isAdmin: true,
-        id_usuario: 0
-      }
+      if (!cuentaPayload) {
+          throw new PC_NoAuthorized("Credenciales inválidas.");
+        }
+
+      const payload: Usuario = cuentaPayload.usuario;
+
       const signOptions: SignOptions = {
         expiresIn: "8h",
-        notBefore: 100,
       }
       const token = fastify.jwt.sign(payload, signOptions);
       return { token: token}
@@ -50,6 +48,9 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         summary: "Perfil del usuario",
         description: "Esta ruta permite ver el perfil del Usuario.",
         tags: ["auth"],
+        response: {
+        200: usuarioSchema
+      },
         security: [
             { bearerAuth: [] }
         ],
@@ -58,9 +59,10 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         await req.jwtVerify();
       },
     handler: async function (req, rep) {
-      return req.user;
+      const { id_usuario } = req.user as Usuario;
+      return usuariosDB.getById(id_usuario);
     }
-})
+  })
 }
 
 export default auth;
