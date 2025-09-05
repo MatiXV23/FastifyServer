@@ -1,10 +1,7 @@
 import type { Usuario } from "../models/usuarios_model.ts";
-import { PC_NotFound, PC_NotImplemented } from "../errors/errors.ts";
+import { PC_BadRequest, PC_NotFound, PC_NotImplemented } from "../errors/errors.ts";
 import { BaseRepository } from "./baseRepository.ts";
-import fastify from "fastify";
-import { Null } from "@fastify/type-provider-typebox";
 import type { Cuenta } from "../models/cuentas_model.ts";
-
 
 class UsuariosDB extends BaseRepository<Usuario> {
     
@@ -17,9 +14,7 @@ class UsuariosDB extends BaseRepository<Usuario> {
     #lastId: number = 3
 
     async #getUsuarioIndex(id){
-        const usuarios = await this.getAll()
-        return usuarios.findIndex((u)=>u.id_usuario===id)
-
+        return this.#cuentas.findIndex((c)=>c.usuario.id_usuario===id)
     }
 
     async getAll(): Promise<Usuario[]>{
@@ -36,24 +31,24 @@ class UsuariosDB extends BaseRepository<Usuario> {
         if (index === -1) {
             throw new PC_NotFound(`Usuario con id ${id}, no encontrado`);
         }
-        const usuarios = await this.getAll()
-        return usuarios[index] 
+        
+        return this.#cuentas[index].usuario 
     }
 
-    async create(data: Partial<Usuario>): Promise<Usuario>{
+    async create(data: Omit<Usuario, "id_usuario">): Promise<Usuario>{
         this.#lastId++
         const usuario: Usuario = {
-            nombre: data.nombre!,
-            isAdmin: data.isAdmin!,
+            nombre: data.nombre,
+            isAdmin: data.isAdmin,
             id_usuario: this.#lastId
         }
         const cuenta : Cuenta = { userName: "admin", password: "admin", usuario: usuario}
         this.#cuentas.push(cuenta)
         return usuario
     }
-    // arreglar
-    async update(id: number, data: Partial<Usuario>): Promise<Usuario>{ 
-        throw new PC_NotImplemented()
+
+    async update(id: number, data: Omit<Usuario, "id_usuario">): Promise<Usuario>{ 
+        
         const index = await this.#getUsuarioIndex(id); 
 
         if (index === -1) {
@@ -61,24 +56,24 @@ class UsuariosDB extends BaseRepository<Usuario> {
         }
 
         const modUser: Usuario = {
-            nombre: data.nombre!,
-            isAdmin: data.isAdmin!,
+            nombre: data.nombre,
+            isAdmin: data.isAdmin,
             id_usuario: id
         }
-        const usuarios = await this.getAll()
-        usuarios[index] = modUser
+        
+        this.#cuentas[index].usuario = modUser
         return modUser
     }
-    // arreglar
+
     async delete(id: number): Promise<void>{
-        throw new PC_NotImplemented()
         const index = await this.#getUsuarioIndex(id); 
+
 
         if (index === -1) {
             throw new PC_NotFound(`Usuario con id ${id}, no encontrado`);
         }
 
-        //this.#usuarios.splice(index, 1);
+        this.#cuentas.splice(index, 1);
     }
 
     async findAll(data?: Partial<Usuario>): Promise<Usuario[]> {
@@ -94,15 +89,27 @@ class UsuariosDB extends BaseRepository<Usuario> {
     }
 
     async getFirstBy(data: Partial<Usuario>): Promise<Usuario | undefined> {
-        const usuarios = await this.getAll()
-        const finded: Usuario | undefined = usuarios.find((u)=> {
+        const finded: Usuario | undefined = this.#cuentas.find((c)=> {
             for (const key in data){
-                if (data[key] !== u[key]) return false
+                if (data[key] !== c.usuario[key]) return false
             }
             return true
-        })
+        })?.usuario
         
         return finded
+    }
+
+    async getAccountByCredentials(credentials: Omit<Cuenta, "usuario">): Promise<Cuenta | undefined>{
+        const {password, userName} = credentials
+        
+        const cuenta = this.#cuentas.find((c) => {
+            if (c.password === password && c.userName === userName) return true
+            return false
+        })
+
+        if (!cuenta) throw new PC_NotFound("Usuario con esas Credenciales, no encontrado")
+
+        return cuenta
     }
 }
 
