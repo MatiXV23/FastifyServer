@@ -5,7 +5,7 @@ import { type Usuario, usuarioSchema } from "../../models/usuarios_model.ts";
 import type { SignOptions } from "jsonwebtoken";
 import jwt from "@fastify/jwt";
 import { usuariosDB } from "../../services/usuarios_db_services.ts";
-import { userInfo } from "os";
+import { cuentaSchema } from "../../models/cuentas_model.ts";
 
 const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object) {
   fastify.post(
@@ -15,10 +15,7 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         summary: "Logearse",
         description: "Esta ruta permite que el usuario se logee.",
         tags: ["auth"],
-        body: Type.Object({
-            userName: Type.String(),
-            password: Type.String()
-        }),
+        body: Type.Omit(cuentaSchema, ["usuario"]),
         response: {
             200: { tokenPrueba : Type.String()}
         },
@@ -28,8 +25,7 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
       },
     
     handler: async function (req, rep) {
-      const { userName, password } = req.body
-      const cuentaPayload = await  usuariosDB.getAccountByCredentials({ userName, password});
+      const cuentaPayload = await  usuariosDB.getAccountByCredentials(req.body);
     
       if (!cuentaPayload) {
           throw new PC_NoAuthorized("Credenciales inválidas.");
@@ -53,14 +49,7 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         description: "Esta ruta permite ver el perfil del Usuario.",
         tags: ["auth"],
         response: {
-        200: Type.Intersect([
-    usuarioSchema,
-    Type.Object({
-      iat: Type.Optional(Type.Number()),
-      exp: Type.Optional(Type.Number()),
-      nbf: Type.Optional(Type.Number())
-    })
-  ]) 
+        200: usuarioSchema
       },
         security: [
             { bearerAuth: [] }
@@ -70,17 +59,10 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         await req.jwtVerify();
       },
     handler: async function (req, rep) {
-      const { nombre, isAdmin, id_usuario, iat, exp, nbf } = req.user;
-      return { nombre, isAdmin, id_usuario, iat, exp, nbf };
+      const { id_usuario } = req.user as Usuario;
+      return usuariosDB.getById(id_usuario);
     }
   })
 }
 
 export default auth;
-
-declare module "@fastify/jwt" {
-  interface FastifyJWT {
-    payload: Usuario; 
-    user: Usuario & { iat?: number; exp?: number; nbf?: number }; 
-  }
-}
