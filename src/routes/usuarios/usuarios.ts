@@ -39,8 +39,6 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function(fastify, option
     },
     async function handler(req, rep) {
       const { nombre, isAdmin } = req.body;
-      if (!nombre || !isAdmin) throw new PC_BadRequest()
-
       const usuario = await usuariosDB.create({nombre:nombre, isAdmin:isAdmin});
       rep.code(201);
       return usuario;
