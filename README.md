@@ -1,7 +1,7 @@
 # Ejercicio 2 - Creación de un servidor HTTP con fastify.
 ![fastify](https://d2ooyrflu7lhqd.cloudfront.net/fastify_fb_share_image_07b6e6860853c758_c74e8381af.png?format=auto)
 ___
-## 📃 Requisitos del proyecto 📃
+## 📃 Requisitos del PROYECTO 📃
 
 - Almacenar en memoria un listado de usuarios
 - Los usuarios tienen:
