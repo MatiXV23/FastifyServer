@@ -13,4 +13,5 @@ export const queryUsuarioSchema = Type.Object({
     id_usuario: Type.Optional(Type.Number({minimum: 1}))
 })
 
+
 export type Usuario = Static<typeof usuarioSchema>
