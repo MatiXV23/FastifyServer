@@ -45,8 +45,6 @@ const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: 
       const id_body = req.body.id_usuario 
 
       if (id_usuario !== id_body) throw new PC_BadRequest("Las ids del body y pasada por parametro, no coinciden.")
-      if (typeof(isAdmin) != "boolean")  throw new PC_BadRequest("El parametro isAdmin debe ser un Boolean.")
-        
       usuariosDB.update(id_usuario, { nombre: nombre, isAdmin: isAdmin});
       return rep.code(204).send();
     }
