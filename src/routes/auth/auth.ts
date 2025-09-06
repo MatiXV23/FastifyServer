@@ -54,6 +54,9 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
         security: [
             { bearerAuth: [] }
         ],
+      // onRequest: async(request, reply)=>{
+      //   await request.jwtVerify(); 
+      // }
       },
       onRequest: async function(req, rep) {
         await req.jwtVerify();
@@ -66,3 +69,10 @@ const auth: FastifyPluginAsyncTypebox = async function(fastify, options: object)
 }
 
 export default auth;
+
+// declare module "@fastify/jwt"{
+//   interface FastifyJWT{
+//     payload: Usuario;
+//     user: Usuario;
+//   }
+// }

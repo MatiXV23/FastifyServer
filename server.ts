@@ -6,6 +6,7 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PC_Error, PC_InternalServerError } from "./src/errors/errors.ts";
 import auth from "./src/routes/auth/auth.ts";
 import jwtPlugin from "./src/plugins/jwt.ts";
+import decoradores from "./src/decorators/decoradores.ts";
 
 const fastify = Fastify({
     logger: {
@@ -20,11 +21,12 @@ const fastify = Fastify({
     }
 }).withTypeProvider<TypeBoxTypeProvider>()
 
-fastify.register(swagger)
-fastify.register(jwtPlugin);
-fastify.register(usuariosRoutes);
-fastify.register(usuarioRoutes)
-fastify.register(auth)
+await fastify.register(swagger)
+await fastify.register(jwtPlugin);
+await fastify.register(usuariosRoutes);
+await fastify.register(usuarioRoutes);
+await fastify.register(auth);
+await fastify.register(decoradores);
 
 fastify.setErrorHandler((err: PC_Error, request, reply) => {
     if (!(err instanceof PC_Error)) err = new PC_InternalServerError()
@@ -36,6 +38,8 @@ fastify.setErrorHandler((err: PC_Error, request, reply) => {
         message: err.message
     });
 });
+
+console.log(fastify.miObjeto);
 
 const listenPort = Number(process.env.FASTIFY_PORT) || 3000
 const listenOptions = {
