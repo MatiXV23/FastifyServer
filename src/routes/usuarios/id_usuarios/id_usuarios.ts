@@ -8,7 +8,7 @@ import { PC_BadRequest } from "../../../errors/errors.ts";
 const usuarioRoutes:FastifyPluginAsyncTypebox= async function(fastify, options: object) {
   
   fastify.get(
-    "/usuarios/:id_usuario",
+    "/usuarios/:id_usuario", // la dirección está duplicada porque ya está dentro de las carpetas 
     {
       schema: {
         summary: "Obtener usuario por id",
