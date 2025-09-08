@@ -20,11 +20,11 @@ const fastify = Fastify({
     }
 }).withTypeProvider<TypeBoxTypeProvider>()
 
-fastify.register(swagger)
-fastify.register(jwtPlugin);
-fastify.register(usuariosRoutes);
-fastify.register(usuarioRoutes)
-fastify.register(auth)
+await fastify.register(swagger)
+await fastify.register(jwtPlugin);
+await fastify.register(usuariosRoutes);
+await fastify.register(usuarioRoutes)
+await fastify.register(auth)
 
 fastify.setErrorHandler((err: PC_Error, request, reply) => {
     if (!(err instanceof PC_Error)) err = new PC_InternalServerError()
